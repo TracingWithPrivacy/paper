@@ -1,0 +1,51 @@
+Goals:
+- Make a realistic risk-score for infection available to the users of the system.
+- Tracks the potential contacts of a user with other users of the app.
+- Must be massively scaleable (40 million+ users, with several thousand contacts a day).
+- Must be capable to deal with temporary offline scenarios (underground, airplane).
+- It may not allow the tracking (who is where) and mapping (who meets whom) through any
+  third party or the operator of the system.
+- Allow statistical evaluation of contact group size and duration.
+
+Observation:
+- Presence-pairing "contact" is an extremely frequent event.
+- Notification about test result/exposure is relatively infrequent compared to contacts.
+
+Roles:
+- Sender: A device broadcasting its presence. Receivers are able to subscribe to the
+  sender's feed of test result and exposure score.
+- Receiver: A device listening for broadcast presence and wants to subscribe to the
+  sender's feed.
+- Backend: Manages subscription and messaging between senders and receivers.
+- Mixes: Systems operated by third parties that serve trust distribution.
+- Emergency Trustees: Third parties that can force a notification to be sent in case that
+  the intended, original sender becomes unavailable (death, no-cooperate).
+- Health Care authority: Can certify the test-status for a sender (infected, immune).
+
+General process:
+- The sender registers with the system and generates key-generation data. That data is
+  secret-shared with the Emergency Trustees, linked to the sender's phone number.
+- The sender broadcasts a temporary public key via suitable means. Multiple temporary
+  public keys cannot be linked to each other. Keys are rotated at a specified frequency
+  that reflects exposure risk (currently 15min). The generation of keys relies on a
+  ratchet that allows the pre- and post-generation within a time-bound (3 weeks).
+  Each key represents a device-time relationship.
+- The receiver witnesses the sender's broadcast. It then encrypts an address to the
+  sender's temporary public key and the backend's static public key. The encrypted
+  message is sent to the backend and stored for the sender's temporary public key.
+- The receiver stores the location, time and sender temporary key.
+- The sender tests positive and receives an authorization token from the health care
+  authority.
+- The sender reveals his key generation data and the authorization token to the backend.
+  The key generation data is capped in the past (3 weeks). If the sender cannot reveal
+  this data, the Emergency Trustees reconstruct it cooperatively and send it to the backend.
+- The backend re-creates all temporary public keys and calculates part of the decryption key.
+  It sends encrypted keys to the sender.
+- The sender decrypts the keys and sends them to the backend.
+- The backend decrypts the messages and appends test-status data from the authorization token.
+  It then sends them through the Mixes.
+- The Mixes decrypt the messages in turn, and finally place it in a per-receiver postbox
+  on the backend.
+- The receiver polls the postbox and receives the messages. These are decrypted to reveal
+  the sender's temporary key and test result. This yields time, location and concurrently
+  witnessed sender public keys that can be used to propagate data through the contact network.
