@@ -194,7 +194,7 @@ For each mailbox address, the client creates a SURB message:
   For each mix, a public key is selected that will remain valid for a sufficient period (which can be determined by the client).
 - MessageKey: A random key, 32 byte.
 A contact address, 32 byte random value (or shorter). 
-To create a contact address, the client creates a Mix message that containing a swap operation for the nymserver. It contains:
+To create a contact address, the client creates a Mix message containing a swap operation for the nymserver. It contains:
 - key:=hash(contact address)
 - Authentication value, for new addresses it is all zero.
 - Payload, encrypted with contact address: SURB.
@@ -233,7 +233,7 @@ server.
 
 Client-generated dummy traffic
 ------------------------------
-The nym-server can: 
+The mailbox-server can: 
 a) Track the identity of a client by matching the pattern of mailbox addresses it polls.
 b) Track if a user is part of an infection chain by seeing if an address has a payload.
 This can be easily prevented by introducing two kinds of client-dummy traffic:
