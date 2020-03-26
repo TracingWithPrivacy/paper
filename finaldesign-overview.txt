@@ -245,6 +245,16 @@ Both kinds of dummy traffic can be combined and also used to devalidate SURBs by
 mixes used by previously generated SURBs. This finally breaks the link between contact address and mailbox address.
 Assuming that a client devalidates both address types every 24h, an additional 330kB of data is required.
 
+Ideal update scheme:
+1.) Replace SURB in contact-address to point to a new mailbox address.
+2.) Wait until all messages in flight must have arrived (this is a few hours).
+3.) Send dummy message to mailbox that intersects at one or more mixes with same address.
+    This can have two effects: The original SURB was used for a notification, and the dummy is discarded, or
+    there was no notification, the dummy is delivered, and any later notification would be discarded (hence step 1+2).
+4.) Wait until all messages in flight must have arrived.
+5.) Check mailbox for notifications, contains either:
+    1.) 1 message that is a dummy.
+    2.) 1 message that is a notification, in which case any follow-up notification will be sent to the new mailbox address.
 
 tl;dr:Results and Privacy Aspects
 ---------------------------------
