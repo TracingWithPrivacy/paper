@@ -1,2 +1,2 @@
 # covidtracker
-An privacy preserving covid tracker design
+A privacy preserving covid tracker design
