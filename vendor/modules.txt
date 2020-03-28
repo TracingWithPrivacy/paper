@@ -1,0 +1,8 @@
+# github.com/decred/dcrd/dcrec/secp256k1 v1.0.3
+## explicit
+github.com/decred/dcrd/dcrec/secp256k1
+# github.com/decred/dcrd/dcrec/secp256k1/v2 v2.0.0
+github.com/decred/dcrd/dcrec/secp256k1/v2
+# golang.org/x/crypto v0.0.0-20200323165209-0ec3e9974c59
+## explicit
+golang.org/x/crypto/hkdf
