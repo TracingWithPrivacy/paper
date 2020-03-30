@@ -8,76 +8,45 @@ date: '2020-03-28 (draft)'
 title: Privacy Preserving Contact Tracer
 ---
 
-tl;dr: Results and Privacy Aspects
-==================================
-
-1.  Low data use. Depending on tuning, the system generates 120kB, 340kb
-    or at most 10MB traffic between each client and the backend system,
-    per day. The bandwidth requirements are **not** dependent on the
-    amount of contacts, or the amount of new, global notifications, or
-    the number of users. The amount of traffic roughly corresponds with
-    the storage required on the user's mobile phone.
-
-2.  The system can easily be implemented for mobile applications, or
-    mobile applications and cheap dedicated wearables.
-
-3.  The calculations required are between 2304 and 207360 scalar
-    multiplications, and the hashing and symmetric encryption of the
-    traffic generated (see 0.), per day. On mobile phones this takes
-    between 4 and 400 seconds . The exact amount of calculations is
-    dependent on privacy settings of the user. Modern devices need
-    between 1 and 100 seconds. The processing requirements are **not**
-    dependent on the amount of contacts, or the amount of new, global
-    notifications, or the number of users.
-
-4.  In addition, per contact address received via broadcast, one scalar
-    multiplication and $<$ 100 bytes of hashing and symmetric encryption
-    is required. For sending the broadcast, no cryptography is required.
-    This realistically allows the implementation of a dedicated,
-    offline, bluetooth only data logger and broadcaster on cheap
-    hardware (ESP32). Only about 100byte per contact received need to be
-    stored. Only 32byte per 5 minute timeslot are required for sending
-    (though this can be dramatically optimized in such a way that an
-    embedded device only needs a single setup and only about 64byte of
-    storage total for all its broadcast packets for its lifetime).
-
-5.  A user cannot be tracked through his broadcasted contact addresses:
-    They are single-use, not linkable, and allow exactly one
-    notification to be sent without client authorization. The
-    notification significance can be suppressed by dummy traffic.
-
-6.  The system cannot link contact-addresses to a client.
-
-7.  The system, if cooperating with an evil device, cannot identify a
-    client.
-
-8.  No client can identify the start of a notification chain (the
-    "infected person", target) unless it can prevent any other person
-    from receiving its own notifications **and** prevent the target from
-    receiving notifications from others. Since the infection chain
-    length cannot be determined by an attacker, a notification can be
-    triggered by the target, or one of the target's contacts.
-    Furthermore the attacker cannot determine who from all receivers of
-    its own contact address triggered the infection chain.
 
 Introduction
 ============
 
-Three models exist:
+Contact tracing, combined with fast and widespread testing and pre-emptive 
+isolation recommendations are likely the most effective method to control 
+and potentially suppress an epidemic spread of infectious deseases. 
+
+When a person tests positive, each of her contacts are immediately classified
+by exposure parameters (which can be translated into infection risk), ordered
+by priority and contacted to suggest immediate self-isolation. Healthcare 
+workers then visit the contact for targeted testing, and repeat the process
+for the necessary number of hops.
+
+The challenge for this approach is the discovery of contacts to follow the 
+infection chain and get ahead of it. Most contacts a person has are spurious
+and escape the memory and escape treatment. 
+
+This makes technological augmentation of the contact tracing process necessary.
+
+Several models for contact tracing exist:
 
 -   Track the location of everybody, at all times, and match co-presence
     with infected persons centrally. Problem: A privacy nightmare.
 
+-   Each person shares its own identity through an encrypted broadcast to
+    all surrounding persons. This approach can quickly be abused and subverted
+    for other purposes, which reduced acceptability and effectiveness.
+
 -   Track all potentially infectious persons around oneself by recording
     their ever-changing temporary ID, and get notified if any of them
     tests positive by verifying all matching IDs to one's own record.
-    Problem: The required bandwidth quickly becomes enormous with a lot
-    of infected people.
+    Problem: The required bandwidth quickly becomes enormous with a lot 
+    of cases.
 
 -   Track all persons that oneself can potentially infect. The number of
     contacts is very limited and they only have to be contacted **if**
     oneself is tested positive. Problem: Requires an anonymous way of
-    contacting. But... this is easily solveable.
+    contacting to prevent abuse. But... this is easily solveable.
 
 Bird's-view description
 -----------------------
@@ -92,8 +61,9 @@ Bird's-view description
 
 3.  User B uses the app as well. His device listens for broadcasted
     contact addresses. On receiving such an address, the app encrypts it
-    to the global backend public key, annotates it with the time, and
-    stores it in a log (contact-log) on the device.
+    to the global backend public key, annotates it with the time (and 
+    potentially location data), and stores it in a log (contact-log) on
+    the device.
 
 4.  Each installation of the app contineously removes entries from the
     contact-log if they are older than a configured duration.
@@ -196,7 +166,14 @@ Nymservers are also mixes (but not vice versa).
 clients on request.
 
 At most 255 entities can exist in the system (sum of nymservers,
-mailbox-servers and mixes).
+mailbox-servers and mixes). However, the system can be extendended 
+easily to allow international use with each nation retaining full 
+control over its own backend resources, case classificatoin and chain
+modelling. This would allow a standardized, high privacy contract 
+tracing approach that is compatible with large amounts of travellers
+and supports smaller countries by distributing the infrastructure costs
+over many stakeholders. In addition, this approach would make it less
+attractive for nationstate actors to undermine this crucial resource.
 
 Mailbox-Server
 --------------
@@ -278,7 +255,7 @@ then the payload is interpreted as a swap operation. If it is a
 mailbox-server, then the payload is used in a Receive operation.
 
 *Uniqueness test*: Each mix calculates and stores the hash of the
-Address. If a address is presented again, the message is silently
+Address. If an address is presented again, the message is silently
 dropped.
 
 For a mix-chain of 4 hops, the header is 141 or 142 bytes long,
@@ -348,6 +325,12 @@ can be done with less then 10kB of data **if** no notifications have
 been received. For each received notification another 238/239 bytes of
 traffic is generated.
 
+It is important to note, that contact addresses can be created in such
+a way that they also serve as keys for end-to-end encryption between
+the healthcare authority and the users. This substantially increases
+the flexibility of risk assessment while protecting health related data
+and each users' identity.
+
 Making contact addresses available
 ----------------------------------
 
@@ -373,6 +356,16 @@ contact address, and the its own log to the nymserver to extend the
 notification chain. This is only done for a single contact address for
 maximum privacy, or for multiple addresses to transmit exposure severity
 data to the server.
+
+It is important to note here, that multiple technologies for broadcasting
+the contact address exist. The currently favored one is Bluetooth LE, which
+may however open some user devices to security risks. The protocol described
+here is easily splitable into a controlling app, installed on the user's
+smartphone or home computer, and a broadcasting&receiving device. Such a
+specialized device would be dedicated for this use and thus be less likely
+to become a security liability. These devices can be mass-produced today
+for less then USD 10, the required chipsets are widely available.
+
 
 Client-generated dummy traffic
 ------------------------------
@@ -417,3 +410,84 @@ Ideal update scheme:
     1.  1 message that is a dummy.
     2.  1 message that is a notification, in which case any follow-up
         notification will be sent to the new mailbox address.
+
+
+Data analysis and risk scoring
+==============================
+
+A devices provides contact addresses as well as time-series data of
+exposure to the healthcare authority. 
+
+Depending on all known characteristics of the disease, it us up to the 
+decision of the healthcare authorities how to classify risk and prioritize 
+contact follow-up. 
+
+Such a decision can be based on time of exposure, severity of viral shedding,
+weather or any other data. The protocol itself provides only time of contact,
+an approximation of contact duration, and a means to contact the affected person.
+
+We consider it paramount that healthcare authorities remain part of the decision
+loop on who to contact at one time. Otherwise no resource management is possible
+and false positive notifications will reduce compliance of the users. 
+
+Furthermore, full automated infectious chain analysis can easily lead to an
+avalanche effect in which far too many persons are notified. This can potentially
+be triggered in any contact tracing protocol without human decision making in the
+loop. Overzealous approaches for automation quickly open such a system to attacks
+and abuse that can threaten the functioning of a society and result in a "societal
+denial of service" attack.
+
+
+Results and Privacy Aspects
+===========================
+
+1.  Low data use. Depending on tuning, the system generates 120kB, 340kb
+    or at most 10MB traffic between each client and the backend system,
+    per day. The bandwidth requirements are **not** dependent on the
+    amount of contacts, or the amount of new, global notifications, or
+    the number of users. The amount of traffic roughly corresponds with
+    the storage required on the user's mobile phone.
+
+2.  The system can easily be implemented for mobile applications, or
+    mobile applications and cheap dedicated wearables.
+
+3.  The calculations required are between 2304 and 207360 scalar
+    multiplications, and the hashing and symmetric encryption of the
+    traffic generated (see 0.), per day. On mobile phones this takes
+    between 4 and 400 seconds . The exact amount of calculations is
+    dependent on privacy settings of the user. Modern devices need
+    between 1 and 100 seconds. The processing requirements are **not**
+    dependent on the amount of contacts, or the amount of new, global
+    notifications, or the number of users.
+
+4.  In addition, per contact address received via broadcast, one scalar
+    multiplication and $<$ 100 bytes of hashing and symmetric encryption
+    is required. For sending the broadcast, no cryptography is required.
+    This realistically allows the implementation of a dedicated,
+    offline, bluetooth only data logger and broadcaster on cheap
+    hardware (ESP32). Only about 100byte per contact received need to be
+    stored. Only 32byte per 5 minute timeslot are required for sending
+    (though this can be dramatically optimized in such a way that an
+    embedded device only needs a single setup and only about 64byte of
+    storage total for all its broadcast packets for its lifetime).
+
+5.  A user cannot be tracked through his broadcasted contact addresses:
+    They are single-use, not linkable, and allow exactly one
+    notification to be sent without client authorization. The
+    notification significance can be suppressed by dummy traffic.
+
+6.  The system cannot link contact-addresses to a client.
+
+7.  The system, if cooperating with an evil device, cannot identify a
+    client.
+
+8.  No client can identify the start of a notification chain (the
+    "infected person", target) unless it can prevent any other person
+    from receiving its own notifications **and** prevent the target from
+    receiving notifications from others. Since the infection chain
+    length cannot be determined by an attacker, a notification can be
+    triggered by the target, or one of the target's contacts.
+    Furthermore the attacker cannot determine who from all receivers of
+    its own contact address triggered the infection chain.
+
+

@@ -122,6 +122,7 @@ func (queue *RandomQueue) Add(sendTime uint64, message interface{}, unixTimeNow 
 
 // GetSendQueue returns the list of messages that should be sent now. If unixTimeNow is 0, the current time will be used.
 func (queue *RandomQueue) GetSendQueue(unixTimeNow uint64) []interface{} {
+	// ToDo: Requires real testing.
 	queue.readerMutex.Lock()
 	defer queue.readerMutex.Unlock()
 
@@ -130,6 +131,7 @@ func (queue *RandomQueue) GetSendQueue(unixTimeNow uint64) []interface{} {
 	}
 	sliceNum := unixTimeNow / queue.granularity
 	if sliceNum <= queue.readPos && queue.readerStarted {
+		// Going back in time.
 		return nil
 	}
 	queue.readerStarted = true
