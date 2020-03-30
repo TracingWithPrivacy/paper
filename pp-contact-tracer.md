@@ -418,7 +418,7 @@ Data analysis and risk scoring
 A devices provides contact addresses as well as time-series data of
 exposure to the healthcare authority. 
 
-Depending on all known characteristics of the disease, it us up to the 
+Depending on all known characteristics of the disease, it is up to the 
 decision of the healthcare authorities how to classify risk and prioritize 
 contact follow-up. 
 
