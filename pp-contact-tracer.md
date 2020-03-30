@@ -4,7 +4,7 @@ abstract: |
     diseases by notifying contact networks of positively tested persons
     and/or places in a privacy preserving way.
 author: '[Jonathan Logan](anontrace.jonathan@cryptogroup.net)'
-date: '2020-03-28 (draft)'
+date: '2020-03-30 (draft)'
 title: Privacy Preserving Contact Tracer
 ---
 
