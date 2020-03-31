@@ -36,7 +36,7 @@ Several models for contact tracing exist:
 
 -   Each person shares its own identity through an encrypted broadcast
     to all surrounding persons. This approach can quickly be abused and
-    subverted for other purposes, which reduced acceptability and
+    subverted for other purposes, which reduces acceptability and
     effectiveness.
 
 -   Track all potentially infectious persons around oneself by recording
@@ -48,7 +48,7 @@ Several models for contact tracing exist:
 -   Track all persons that oneself can potentially infect. The number of
     contacts is very limited and they only have to be contacted **if**
     oneself is tested positive. Problem: Requires an anonymous way of
-    contacting to prevent abuse. But... this is easily solveable.
+    contacting to prevent abuse. But... this is easily solvable.
 
 Bird's-view description
 -----------------------
@@ -70,7 +70,7 @@ Bird's-view description
 4.  Each installation of the app contineously removes entries from the
     contact-log if they are older than a configured duration.
 
-5.  In case of postitive test for an infection, user B receives a
+5.  In case of positive test for an infection, user B receives a
     one-time token from his healthcare provider. It includes the disease
     code. User B then authorizes the app to upload his contact log, the
     backend system authenticates the upload with the one-time token.
@@ -168,10 +168,10 @@ Nymservers are also mixes (but not vice versa).
 clients on request.
 
 At most 255 entities can exist in the system (sum of nymservers,
-mailbox-servers and mixes). However, the system can be extendended
+mailbox-servers and mixes). However, the system can be extended
 easily to allow international use with each nation retaining full
-control over its own backend resources, case classificatoin and chain
-modelling. This would allow a standardized, high privacy contract
+control over its own backend resources, case classification and chain
+modelling. This would allow a standardized, high privacy contact
 tracing approach that is compatible with large amounts of travellers and
 supports smaller countries by distributing the infrastructure costs over
 many stakeholders. In addition, this approach would make it less
