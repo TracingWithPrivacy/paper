@@ -4,6 +4,8 @@ Covidtracer
 This repository contains a privacy preserving contact tracer design for
 COVID-19, read the [PDF](pp-contact-tracer.pdf).
 
+Contact me at anontrace dot jonathan [at] cryptogroup dot net
+
 ### Key features
 
 -   No personal data is shared with the system at any time. No constant
