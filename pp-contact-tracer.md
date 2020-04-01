@@ -56,10 +56,7 @@ Bird's-view description
 1.  User A registers with the app. This generates a number of contact
     addresses that are *blind*, *unlinkable* and *untraceable* (see
     below). The contact addresses are stored on the backend.
-    Additionally ephemeral public keys are used
-    to request contact addresses from other users. A contact address
-    of A will be denoted K~A~ and an ephemeral address used by A to request
-    contact addresses of other users will be denoted K~Ae~.
+    A contact address of A will be denoted with K.
 
 2.  User A now waits for a request by another user B to send one of his
     contact addresses.
@@ -73,12 +70,12 @@ Bird's-view description
     potentially location data), and stores it in a log (contact-log) on
     the device.
 
-4.  One run of the challenge-response protocol, where *K* is the shared secret
-    *K~A,Be~* and *N~B~* is a nonce to guarantee a fresh response:
+4.  One run of the challenge-response protocol, where *K* is the contact address of A
+    and *N* is a nonce to guarantee a fresh response:
 
-    *B -> A: N~B~,K~Be~*
+    *B -> A: N*
 
-    *A -> B: K~A~,HMAC(K,{N~B~,K~A~}~K~),{N~B~,K~A~}~K~*
+    *A -> B: K,S~K~(N)*
 
 4.  Each installation of the app continuously removes entries from the
     contact-log if they are older than a configured duration.
