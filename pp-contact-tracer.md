@@ -56,18 +56,31 @@ Bird's-view description
 1.  User A registers with the app. This generates a number of contact
     addresses that are *blind*, *unlinkable* and *untraceable* (see
     below). The contact addresses are stored on the backend.
+    Additionally ephemeral public keys are used
+    to request contact addresses from other users. A contact address
+    of A will be denoted K~A~ and an ephemeral address used by A to request
+    contact addresses of other users will be denoted K~Ae~.
 
-2.  User A now continously broadcasts his unblinded contact addresses.
-    One per timeslot. Each address is only broadcasted in one timeslot
-    and never again. Broadcasting is implemented on top of Bluetooth.
+2.  User A now waits for a request by another user B to send one of his
+    contact addresses.
+    User A will reply to every request received during a timeslot with the same
+    contact address. Communication is implemented on top of Bluetooth.
 
-3.  User B uses the app as well. His device listens for broadcasted
-    contact addresses. On receiving such an address, the app encrypts it
-    to the global backend public key, annotates it with the time (and
+3.  User B uses the app as well. His device requests other users to send
+    their contact addresses. The period between requests can be chosen to meet
+    temporal resolution requirements. On receiving a response to a request,
+    the app encrypts it to the global backend public key, annotates it with the time (and
     potentially location data), and stores it in a log (contact-log) on
     the device.
 
-4.  Each installation of the app contineously removes entries from the
+4.  One run of the challenge-response protocol, where *K* is the shared secret
+    *K~A,Be~* and *N~B~* is a nonce to guarantee a fresh response:
+
+    *B -> A: N~B~,K~Be~*
+
+    *A -> B: K~A~,HMAC(K,{N~B~,K~A~}~K~),{N~B~,K~A~}~K~*
+
+4.  Each installation of the app continuously removes entries from the
     contact-log if they are older than a configured duration.
 
 5.  In case of positive test for an infection, user B receives a
